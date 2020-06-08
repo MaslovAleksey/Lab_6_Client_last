@@ -1,0 +1,7 @@
+show
+help
+count_less_then_cave
+1000
+remove_key
+2
+average_of_age
