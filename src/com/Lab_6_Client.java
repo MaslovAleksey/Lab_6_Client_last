@@ -1,6 +1,6 @@
 package com;
 
-import com.support.USER_DRAG_CLIENT;
+import com.support.UserDragClient;
 
 /**
  * Основной класс программы клиентского приложения
@@ -11,8 +11,8 @@ public class Lab_6_Client
 {
     public static void main (String[] args)
     {
-        USER_DRAG_CLIENT us_grag = new USER_DRAG_CLIENT();
-        us_grag.process();
+        UserDragClient userDragonClient = new UserDragClient();
+        userDragonClient.process();
     }
 }
 

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
  * Класс, являющийся результатом обработки ответа сервера
  */
 
-public class INFO_RESPONSE implements Serializable {
+public class InfoResponse implements Serializable {
     static final long serialVersionUID = -4862926644813433708L;
     String collectionType;
     int size;

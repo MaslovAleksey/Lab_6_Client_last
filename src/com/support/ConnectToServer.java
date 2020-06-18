@@ -3,21 +3,21 @@ package com.support;
 import com.beg_data.Dragon;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.response.AVG_AGE_RESPONSE;
-import com.response.COUNT_RESPONSE;
-import com.response.INFO_RESPONSE;
+import com.response.AvgAgeResponse;
+import com.response.CountResponse;
+import com.response.InfoResponse;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.LinkedList;
 
 /**
  * Класс, осуществляющий серриализацию объекта и взаимодействие с сервером
  */
-public class CONNECT_TO_SERVER {
+public class ConnectToServer {
     /**
      * Список элементов коллекции, полученный от сервера
      */
@@ -30,14 +30,15 @@ public class CONNECT_TO_SERVER {
      * @param port Порт
      */
 
-    public void connect(OBJ_TO_SERV inputData, String host, Integer port, boolean needExit) throws IOException {
+    public void connect(ObjToServer inputData, String host, Integer port, boolean needExit) throws IOException, UnresolvedAddressException {
         SocketChannel client = SocketChannel.open(); // создание канала для связи с сервером
         client.connect(new InetSocketAddress(host, port)); // установление соединения
         client.configureBlocking(false); // Неблокирующий режим
 
 
         // Серриализация объекта
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
 
             objectOutputStream.writeObject(inputData);
             objectOutputStream.flush();
@@ -73,11 +74,11 @@ public class CONNECT_TO_SERVER {
      * @param request Запрос, отправленный на сервер
      * @param result Ответ сервера
      */
-    private void processResult(OBJ_TO_SERV request, Serializable result) {
+    private void processResult(ObjToServer request, Serializable result) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        switch (request.get_command()) {
+        switch (request.getCommand()) {
             case "info":
-                INFO_RESPONSE r = (INFO_RESPONSE) result;
+                InfoResponse r = (InfoResponse) result;
                 System.out.printf("Информация о коллекции:\nТип коллекции - %s\nКоличество элементов - %s\n",
                         r.getCollectionType(), r.getSize());
                 if (r.getSize() != 0)
@@ -102,6 +103,10 @@ public class CONNECT_TO_SERVER {
                 System.out.println("Коллекция очищена");
                 break;
 
+            case "save":
+                System.out.println("Коллекция сохранена в указанный файл");
+                break;
+
             case "history":
                 LinkedList<String> history = (LinkedList<String>) result;
                 System.out.println("Последние команды, вызванные пользователем(не более 6):");
@@ -116,33 +121,33 @@ public class CONNECT_TO_SERVER {
                 break;
 
             case "average_of_age":
-                AVG_AGE_RESPONSE avg = (AVG_AGE_RESPONSE) result;
+                AvgAgeResponse avg = (AvgAgeResponse) result;
                 System.out.println("Средний возраст элементов коллекции: " + avg.getAverageAge());
                 break;
 
             case "remove_key":
-                System.out.println("Коллекция после попытки удаления элемента (key = " + request.get_value() + "):");
+                System.out.println("Коллекция после попытки удаления элемента (key = " + request.getValue() + "):");
                 dragons = (LinkedList<Dragon>) result;
                 for (Dragon dr : dragons)
                     System.out.println(dr.toString());
                 break;
 
             case "remove_greater_key":
-                System.out.println("Коллекция после удаления элементов, ключ которых превышает заданный (key = " + request.get_value() + "):");
+                System.out.println("Коллекция после удаления элементов, ключ которых превышает заданный (key = " + request.getValue() + "):");
                 dragons = (LinkedList<Dragon>) result;
                 for (Dragon dr : dragons)
                     System.out.println(dr.toString());
                 break;
 
             case "replace_if_lowe_key":
-                System.out.println("Коллекция после попытки замены элемента (key = " + request.get_value() + "):");
+                System.out.println("Коллекция после попытки замены элемента (key = " + request.getValue() + "):");
                 dragons = (LinkedList<Dragon>) result;
                 for (Dragon dr : dragons)
                     System.out.println(dr.toString());
                 break;
 
             case "update_id":
-                System.out.println("Коллекция после попытки обновления элемента (id = " + request.get_value() + "):");
+                System.out.println("Коллекция после попытки обновления элемента (id = " + request.getValue() + "):");
                 dragons = (LinkedList<Dragon>) result;
                 for (Dragon dr : dragons)
                     System.out.println(dr.toString());
@@ -150,14 +155,14 @@ public class CONNECT_TO_SERVER {
 
             case "insert_key":
                 dragons = (LinkedList<Dragon>) result;
-                System.out.println("Дракон с заданным ключом - {" + request.get_value() + "} добавлен в коллекцию");
+                System.out.println("Дракон с заданным ключом - {" + request.getValue() + "} добавлен в коллекцию");
                 System.out.println("Элементы коллекции в строковом представлении:");
                 for (Dragon dr : dragons)
                     System.out.println(dr.toString());
                 break;
 
             case "count_less_then_cave":
-                COUNT_RESPONSE count = (COUNT_RESPONSE) result;
+                CountResponse count = (CountResponse) result;
                 System.out.println(count.getCount() + " caves found");
                 break;
 

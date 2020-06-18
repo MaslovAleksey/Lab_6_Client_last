@@ -6,10 +6,10 @@ import java.io.Serializable;
  * Класс, являющийся результатом обработки ответа сервера
  */
 
-public class AVG_AGE_RESPONSE implements Serializable {
+public class AvgAgeResponse implements Serializable {
     double averageAge;
 
-    public AVG_AGE_RESPONSE(double averageAge) {
+    public AvgAgeResponse(double averageAge) {
         this.averageAge = averageAge;
     }
 
